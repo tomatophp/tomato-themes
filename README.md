@@ -1,6 +1,6 @@
 ![Screenshot](https://github.com/tomatophp/tomato-themes/blob/master/art/screenshot.png)
 
-# Tomato themes
+# Tomato Themes
 
 A Theme System Like Wordpress on your Tomato Admin
 
@@ -8,37 +8,6 @@ A Theme System Like Wordpress on your Tomato Admin
 
 ```bash
 composer require tomatophp/tomato-themes
-```
-after install your package please run this command
-
-```bash
-php artisan tomato-themes:install
-```
-
-## Publish Assets
-
-you can publish config file by use this command
-
-```bash
-php artisan vendor:publish --tag="tomato-themes-config"
-```
-
-you can publish views file by use this command
-
-```bash
-php artisan vendor:publish --tag="tomato-themes-views"
-```
-
-you can publish languages file by use this command
-
-```bash
-php artisan vendor:publish --tag="tomato-themes-lang"
-```
-
-you can publish migrations file by use this command
-
-```bash
-php artisan vendor:publish --tag="tomato-themes-migrations"
 ```
 
 ## Support
