@@ -44,9 +44,6 @@ class TomatoThemesGenerate extends Command
             $themeName = $this->ask('What is the name of the theme?');
         }
 
-
-        $themeName = Str::of($themeName)->camel()->ucfirst()->toString();
-
         $themeDescription = $this->ask('What is the description of the theme?', 'No description');
 
         $generate = new GenerateTheme(
