@@ -10,8 +10,11 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Tomatophp\\TomatoThemes\\": "src/"
-        }
+            "TomatoPHP\\TomatoThemes\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -21,7 +24,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Tomatophp\\TomatoThemes\\TomatoThemesServiceProvider"
+                "TomatoPHP\\TomatoThemes\\TomatoThemesServiceProvider"
             ]
         }
     },
@@ -33,6 +36,9 @@
     ],
     "require": {
         "php": "^8.0.2",
-        "tomatophp/console-helpers": "^1.0"
+        "tomatophp/console-helpers": "^1.0",
+        "tomatophp/tomato-admin": "^1.0",
+        "tomatophp/tomato-settings": "^1.0",
+        "tomatophp/tomato-components": "^1.0"
     }
 }

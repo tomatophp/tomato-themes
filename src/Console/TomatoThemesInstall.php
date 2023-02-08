@@ -1,6 +1,6 @@
 <?php
 
-namespace Tomatophp\TomatoThemes\Console;
+namespace TomatoPHP\TomatoThemes\Console;
 
 use Illuminate\Console\Command;
 use TomatoPHP\ConsoleHelpers\Traits\RunCommand;
@@ -36,12 +36,8 @@ class TomatoThemesInstall extends Command
      */
     public function handle()
     {
-        $this->info('Publish Vendor Assets');
-        $this->callSilent('optimize:clear');
-        $this->yarnCommand(['install']);
-        $this->yarnCommand(['build']);
-        $this->artisanCommand(["migrate"]);
+        $this->info('Clear Views For Routes');
         $this->artisanCommand(["optimize:clear"]);
-        $this->info('tomatoThemes installed successfully.');
+        $this->info('🍅 Tomato Themes installed successfully.');
     }
 }

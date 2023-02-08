@@ -1,0 +1,286 @@
+<?php
+
+namespace TomatoPHP\TomatoThemes\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use ProtoneMedia\Splade\Facades\Toast;
+use TomatoPHP\TomatoSettings\Settings\ThemesSettings;
+use TomatoPHP\TomatoThemes\Generator\GenerateTheme;
+use ZipArchive;
+
+/**
+ *
+ */
+class ThemesController extends Controller
+{
+    /**
+     * @var ThemesSettings
+     */
+    private ThemesSettings $setting;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->setting = new ThemesSettings();
+    }
+
+    /**
+     * @param Request $request
+     * @return Application|Factory|View
+     */
+    public function index(Request $request): Application|Factory|View
+    {
+        $getThemes = [];
+        if(File::exists(base_path('Themes'))){
+            $getThemes = collect(File::directories(base_path('Themes')));
+            $getThemes->transform(callback: static fn($item) => array(
+                "name" => Str::of($item)->remove(base_path('Themes').'/')->ucfirst()->title()->toString(),
+                "path" => $item,
+                "info" => json_decode(File::get($item . "/info.json"), false),
+            ));
+
+            if($request->has('search') && !empty($request->get('search'))){
+                $getThemes = $getThemes->where('name','like', $request->get('search'));
+            }
+        }
+
+        return view('tomato-themes::index', [
+            'themes' => $getThemes
+        ]);
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function create(): Application|Factory|View
+    {
+        return view('tomato-themes::create');
+    }
+
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            "name" => "required|string|max:100",
+            "description" => "nullable|string|max:255",
+        ]);
+
+        if(File::exists(base_path('Themes'))) {
+            $themes = File::directories(base_path('Themes'));
+            $exists = false;
+            foreach($themes as $theme){
+                $info = json_decode(File::get($theme . "/info.json"), false);
+                if($info->name == $request->get('name')){
+                    $exists = true;
+                    break;
+                }
+            }
+
+            if($exists){
+                Toast::danger(__('Sorry Your Theme Name Already Exists'))->autoDismiss(2);
+                return back();
+            }
+        }
+
+        $generator = new GenerateTheme(
+            themeName: $request->get('name'),
+            themeDescription: $request->get('description')
+        );
+        $generator->generate();
+
+        Toast::success(__('Your Theme Created Successfully'))->autoDismiss(2);
+        return redirect()->route('admin.themes.index');
+    }
+
+    /**
+     * @param string $theme
+     * @return Application|Factory|View|RedirectResponse
+     */
+    public function custom(string $theme): Application|Factory|View|RedirectResponse
+    {
+        if(File::exists(base_path('Themes') . "/" . $theme))
+        {
+            $getTheme = [];
+            $getTheme['name'] = $theme;
+            $getTheme['info'] = json_decode(File::get(base_path('Themes').'/'.$theme . "/info.json"), false);
+
+            $default = [];
+            foreach ($getTheme['info']->settings as $key=>$setting) {
+                $default[$key] = $setting->value;
+            }
+            $getSetting = new \TomatoPHP\TomatoSettings\Settings\ThemesSettings();
+            $default['theme_main_color'] = $getSetting->theme_main_color;
+            $default['theme_secandry_color'] = $getSetting->theme_secandry_color;
+            $default['theme_sub_color'] = $getSetting->theme_sub_color;
+            $default['theme_footer'] = $getSetting->theme_footer;
+            $default['theme_css'] = $getSetting->theme_css;
+            $default['theme_js'] = $getSetting->theme_js;
+            $default['theme_copyright'] = $getSetting->theme_copyright;
+
+
+            return view('tomato-themes::custom', [
+                "theme" => $getTheme,
+                "default" => $default
+            ]);
+        }
+
+        Toast::danger(__('Sorry Your Theme Not Found'))->autoDismiss(2);
+        return back();
+    }
+
+    /**
+     * @param Request $request
+     * @param string $theme
+     * @return RedirectResponse
+     */
+    public function customSave(Request $request, string $theme): RedirectResponse
+    {
+        if(File::exists(base_path('Themes') . "/" . $theme)) {
+            $filePath = base_path('Themes') . '/' . $theme . "/info.json";
+            $info = json_decode(File::get($filePath, false));
+
+            $rules = [];
+            foreach ($info->settings as $key=>$setting) {
+                $rules[$key] = $setting->required ? 'required' : 'nullable';
+            }
+            $request->validate($rules);
+
+            foreach ($info->settings as $key=>$setting) {
+                $info->settings->{$key}->value = $request->get($key);
+            }
+
+            File::put($filePath,  json_encode($info, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
+
+
+            $this->setting->theme_main_color = $request->get('theme_main_color') ?? "";
+            $this->setting->theme_secandry_color = $request->get('theme_secandry_color')?? "";
+            $this->setting->theme_sub_color = $request->get('theme_sub_color')?? "";
+            $this->setting->theme_header = $request->get('theme_header')?? "";
+            $this->setting->theme_footer = $request->get('theme_footer')?? "";
+            $this->setting->theme_css = $request->get('theme_css')?? "";
+            $this->setting->theme_js = $request->get('theme_js')?? "";
+            $this->setting->theme_copyright = $request->get('theme_copyright')?? "";
+            $this->setting->save();
+
+            Toast::success(__('Your Theme Settings Has Been Updated Success'))->autoDismiss(2);
+            return back();
+
+        }
+
+        Toast::danger(__('Sorry Your Theme Not Found'))->autoDismiss(2);
+        return back();
+    }
+
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function active(Request $request): RedirectResponse
+    {
+        $request->validate([
+           "theme" => "required|string",
+           "name" => "required|string"
+        ]);
+
+        $theme = $request->get("name");
+        if(File::exists(base_path('Themes') . '/' . $theme)){
+            $this->setting->theme_name = $request->get('theme');
+            $this->setting->theme_path = $request->get('name');
+            $this->setting->save();
+
+            $themes = File::directories(base_path('Themes'));
+            foreach($themes as $item){
+                $filePath = $item . "/info.json";
+                $info = json_decode(File::get($filePath));
+
+                if($info->name === $request->get('name')){
+                    $info->active = true;
+                }
+                else {
+                    $info->active = false;
+                }
+
+                File::put($filePath,  json_encode($info, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
+            }
+
+            $assetsFile = File::exists(public_path('themes') . $theme);
+            if(!$assetsFile){
+                File::copyDirectory(base_path('Themes') . '/' . $theme . '/assets', public_path('themes') . '/' . $theme);
+            }
+
+            Toast::success(__('Your Theme Activated Success!'))->autoDismiss(2);
+            return back();
+        }
+
+        Toast::danger(__('Sorry This Theme Not Found!'))->autoDismiss(2);
+        return back();
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function upload(): Application|Factory|View
+    {
+        return view('tomato-themes::upload');
+    }
+
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function uploadNew(Request $request): RedirectResponse
+    {
+        $request->validate([
+           "theme" => "required|file|mimes:zip"
+        ]);
+
+        $zip = new ZipArchive;
+        $res = $zip->open($request->file('theme'));
+
+        if ($res === TRUE) {
+            $zip->extractTo(base_path('Themes'));
+            if(File::exists(base_path('Themes/__MACOSX'))){
+                File::deleteDirectory(base_path('Themes/__MACOSX'));
+            }
+
+            $zip->close();
+
+            Toast::success(__('Your Theme Has Been Added Success'))->autoDismiss(2);
+            return back();
+        }
+
+        Toast::danger(__('Sorry Your File Uploaded Is Not Correct'))->autoDismiss(2);
+        return back();
+    }
+
+
+    /**
+     * @param string $theme
+     * @return RedirectResponse
+     */
+    public function destroy(string $theme): RedirectResponse
+    {
+        if(File::exists(base_path('Themes') .'/'. $theme)){
+            File::deleteDirectory(base_path('Themes') .'/'.  $theme);
+            File::deleteDirectory(public_path('themes') .'/'.  $theme);
+
+            Toast::success(__('Your Theme Has Been Deleted Success'));
+            return back();
+        }
+
+        Toast::danger(__('Sorry Your Theme Not Found'))->autoDismiss(2);
+        return back();
+    }
+}
