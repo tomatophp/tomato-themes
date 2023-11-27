@@ -120,7 +120,7 @@ class BuilderController extends Controller
     }
 
     public function clear(\TomatoPHP\TomatoCms\Models\Page $model){
-        $model->sections()->sync([]);
+        $model->meta('sections', []);
 
         Toast::success(__('Sections cleared successfully'))->autoDismiss(2);
         return redirect()->back();
