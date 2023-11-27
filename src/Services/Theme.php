@@ -10,6 +10,8 @@ use TomatoPHP\TomatoThemes\Services\Abstract\Section;
 
 class Theme
 {
+    public array $sections = [];
+
     public function registerSection(Section $section): void
     {
         $this->sections[] = $section->toCollection();

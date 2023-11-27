@@ -3,40 +3,35 @@
 {{ namespace }}
 
 use TomatoPHP\TomatoThemes\Facades\TomatoThemes;
-use TomatoPHP\TomatoThemes\Services\Contracts\Section;
 use TomatoPHP\TomatoForms\Facades\TomatoForms;
 use TomatoPHP\TomatoForms\Services\Contracts\Form;
 use TomatoPHP\TomatoForms\Services\Contracts\FormInput;
+use TomatoPHP\TomatoThemes\Services\Abstract\Section;
 
-class {{ name }}Section
+class {{ name }}Section extends Section
 {
-    public static function build(): void
+    public ?string $label = null;
+    public ?string $group = "sections";
+    public ?string $icon = "bx bx-circle";
+    public ?string $description = "use it to get {{ title }} section";
+
+    public function label(): string
     {
-        TomatoForms::register((new self())->form());
-        TomatoThemes::registerSection((new self())->section());
+        return __('{{ title }} Section Form');
     }
 
-    public function form(): Form
+    public function form(): string
     {
-        return Form::make()
-            ->title(__('{{ title }}'))
-            ->name(__('{{ title }} Section Form'))
-            ->key('{{ key }}')
-            ->inputs([
-                FormInput::make()
-                    ->name('title')
-                    ->type('text')
-                    ->toArray()
-            ]);
+        return '';
     }
 
-    public function section(): Section
+    public function section(): string
     {
-        return Section::make()
-            ->key('{{ key }}')
-            ->icon('bx bx-circle')
-            ->form('{{ key }}')
-            ->view('{{ view }}')
-            ->type('section');
+        return '{{ view }}';
+    }
+
+    public function config(): array
+    {
+        return [];
     }
 }
