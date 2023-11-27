@@ -14,7 +14,7 @@ Route::middleware(['web', 'auth', 'splade', 'verified'])->name('admin.')->group(
     Route::post('admin/pages/{model}/clear', [\TomatoPHP\TomatoThemes\Http\Controllers\BuilderController::class, 'clear'])->name('pages.clear');
 });
 
-Route::middleware(['web', 'splade', 'auth', 'verified'])->prefix('themes')->name('admin.themes.')->group(static function (){
+Route::middleware(['web','auth', 'splade', 'verified'])->prefix('themes')->name('admin.themes.')->group(static function (){
    Route::get('/', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'index'])->name('index');
    Route::post('/active', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'active'])->name('active');
    Route::get('/custom/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'custom'])->name('custom');
@@ -24,18 +24,6 @@ Route::middleware(['web', 'splade', 'auth', 'verified'])->prefix('themes')->name
    Route::get('/upload', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'upload'])->name('upload');
    Route::post('/upload', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'uploadNew'])->name('upload.new');
    Route::delete('/destroy/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'destroy'])->name('destroy');
-});
-
-Route::middleware(['web','auth', 'splade', 'verified'])->name('admin.')->group(function () {
-    Route::get('admin/sections', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'index'])->name('sections.index');
-    Route::get('admin/sections/api', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'api'])->name('sections.api');
-    Route::get('admin/sections/create', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'create'])->name('sections.create');
-    Route::get('admin/sections/generate', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'generate'])->name('sections.generate');
-    Route::post('admin/sections', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'store'])->name('sections.store');
-    Route::get('admin/sections/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'show'])->name('sections.show');
-    Route::get('admin/sections/{model}/edit', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'edit'])->name('sections.edit');
-    Route::post('admin/sections/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'update'])->name('sections.update');
-    Route::delete('admin/sections/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\SectionController::class, 'destroy'])->name('sections.destroy');
 });
 
 Route::middleware(['web','auth', 'splade', 'verified'])->name('admin.')->group(function () {
