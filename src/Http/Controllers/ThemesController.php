@@ -217,7 +217,7 @@ class ThemesController extends Controller
 
             $assetsFile = File::exists(public_path('themes') . $theme);
             if(!$assetsFile){
-                File::copyDirectory(base_path('Themes') . '/' . $theme . '/assets', public_path('themes') . '/' . $theme);
+                File::copyDirectory(base_path('Themes') . '/' . $theme . '/assets', storage_path('app/public/themes') . '/' . $theme);
             }
 
             Toast::success(__('Your Theme Activated Success!'))->autoDismiss(2);
@@ -274,7 +274,7 @@ class ThemesController extends Controller
     {
         if(File::exists(base_path('Themes') .'/'. $theme)){
             File::deleteDirectory(base_path('Themes') .'/'.  $theme);
-            File::deleteDirectory(public_path('themes') .'/'.  $theme);
+            File::deleteDirectory(storage_path('app/public/themes') .'/'.  $theme);
 
             Toast::success(__('Your Theme Has Been Deleted Success'));
             return back();

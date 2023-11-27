@@ -10,7 +10,7 @@ if(!function_exists('theme_assets')) {
      */
     function theme_assets(string $path = null): string
     {
-        return asset('themes/' . setting('theme_name') . '/' . $path);
+        return asset('storage/themes/' . setting('theme_name') . '/' . $path);
     }
 }
 
@@ -43,24 +43,10 @@ if(!function_exists('theme_setting')) {
 }
 
 if(!function_exists('section')){
-    function section($key, $byPlace = false){
-        $section = Section::query();
-        if($byPlace){
-            if(is_array($key)){
-                return $section->whereIn('place', $key)->get();
-            }
-            else {
-                return $section->where('place', $key)->get();
-            }
-        }
-        else {
-            if(is_array($key)){
-                return $section->whereIn('place', $key)->get();
-            }
-            else {
-                return $section->where('place', $key)->first();
-            }
-        }
+    function section($key){
+        $section = \TomatoPHP\TomatoThemes\Facades\TomatoThemes::find($key);
+
+        return $section;
     }
 }
 
