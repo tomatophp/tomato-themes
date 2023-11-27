@@ -42,6 +42,6 @@
         "tomatophp/tomato-crm": "^1.1",
         "tomatophp/tomato-settings": "^1.1",
         "tomatophp/tomato-cms": "^1.1",
-        "tomatophp/tomato-ecommerce": "^1.1"
+        "tomatophp/tomato-ecommerce": "^1.0"
     }
 }
