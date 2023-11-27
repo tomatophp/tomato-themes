@@ -1,0 +1,42 @@
+<?php
+
+{{ namespace }}
+
+use TomatoPHP\TomatoThemes\Facades\TomatoThemes;
+use TomatoPHP\TomatoThemes\Services\Contracts\Section;
+use TomatoPHP\TomatoForms\Facades\TomatoForms;
+use TomatoPHP\TomatoForms\Services\Contracts\Form;
+use TomatoPHP\TomatoForms\Services\Contracts\FormInput;
+
+class {{ name }}Section
+{
+    public static function build(): void
+    {
+        TomatoForms::register((new self())->form());
+        TomatoThemes::registerSection((new self())->section());
+    }
+
+    public function form(): Form
+    {
+        return Form::make()
+            ->title(__('{{ title }}'))
+            ->name(__('{{ title }} Section Form'))
+            ->key('{{ key }}')
+            ->inputs([
+                FormInput::make()
+                    ->name('title')
+                    ->type('text')
+                    ->toArray()
+            ]);
+    }
+
+    public function section(): Section
+    {
+        return Section::make()
+            ->key('{{ key }}')
+            ->icon('bx bx-circle')
+            ->form('{{ key }}')
+            ->view('{{ view }}')
+            ->type('section');
+    }
+}

@@ -4,9 +4,14 @@ namespace TomatoPHP\TomatoThemes;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use TomatoPHP\TomatoAdmin\Facade\TomatoMenu;
+use TomatoPHP\TomatoAdmin\Services\Contracts\Menu;
 use TomatoPHP\TomatoPHP\Services\Menu\TomatoMenuRegister;
+use TomatoPHP\TomatoThemes\Console\TomatoSectionGenerator;
 use TomatoPHP\TomatoThemes\Console\TomatoThemesGenerate;
+use TomatoPHP\TomatoThemes\Facades\TomatoThemes;
 use TomatoPHP\TomatoThemes\Menus\ThemesMenu;
+use TomatoPHP\TomatoThemes\Services\Theme;
 
 
 class TomatoThemesServiceProvider extends ServiceProvider
@@ -16,7 +21,8 @@ class TomatoThemesServiceProvider extends ServiceProvider
         //Register generate command
         $this->commands([
            \TomatoPHP\TomatoThemes\Console\TomatoThemesInstall::class,
-            TomatoThemesGenerate::class
+            TomatoThemesGenerate::class,
+            TomatoSectionGenerator::class
         ]);
 
         //Register Config file
@@ -47,13 +53,11 @@ class TomatoThemesServiceProvider extends ServiceProvider
 
         //Publish Lang
         $this->publishes([
-           __DIR__.'/../resources/lang' => app_path('lang/vendor/tomato-themes'),
+           __DIR__.'/../resources/lang' => base_path('lang/vendor/tomato-themes'),
         ], 'tomato-themes-lang');
 
         //Register Routes
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-
-        TomatoMenuRegister::registerMenu(ThemesMenu::class);
 
 
         if(File::exists(base_path('Themes'))){
@@ -76,10 +80,27 @@ class TomatoThemesServiceProvider extends ServiceProvider
                 }
             }
         }
+
+        app()->bind('tomato-themes', function(){
+            return new Theme();
+        });
     }
 
     public function boot(): void
     {
-        //you boot methods here
+       TomatoMenu::register([
+           Menu::make()
+               ->group(__('Themes'))
+               ->label(trans('tomato-themes::messages.title'))
+               ->icon("bx bxs-brush")
+               ->route("admin.themes.index"),
+           Menu::make()
+               ->group(__('Themes'))
+               ->label(__('Features'))
+               ->icon('bx bx-list-check')
+               ->route('admin.features.index')
+       ]);
+
+       TomatoThemes::loadSections();
     }
 }

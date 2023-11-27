@@ -1,8 +1,8 @@
 <x-tomato-admin-layout>
-    <x-slot name="header">
+    <x-slot:header>
         {{ trans('tomato-themes::messages.title') }}
-    </x-slot>
-    <x-slot name="headerBody">
+    </x-slot:header>
+    <x-slot:buttons>
         <div class="flex justify-end">
             <x-splade-form class="mx-2" action="{{route('admin.themes.index')}}" method="GET">
                 <x-splade-input @change="form.submit()" placeholder="Search By Theme Name" name="search" type="search"></x-splade-input>
@@ -12,7 +12,7 @@
                 {{__('Upload Theme')}}
             </Link>
         </div>
-    </x-slot>
+    </x-slot:buttons>
 
     <div>
         <x-splade-data default="{show: false}">

@@ -53,7 +53,7 @@ class ThemesController extends Controller
             }
         }
 
-        return view('tomato-themes::index', [
+        return view('tomato-themes::themes.index', [
             'themes' => $getThemes
         ]);
     }
@@ -63,7 +63,7 @@ class ThemesController extends Controller
      */
     public function create(): Application|Factory|View
     {
-        return view('tomato-themes::create');
+        return view('tomato-themes::themes.create');
     }
 
     /**
@@ -233,7 +233,7 @@ class ThemesController extends Controller
      */
     public function upload(): Application|Factory|View
     {
-        return view('tomato-themes::upload');
+        return view('tomato-themes::themes.upload');
     }
 
     /**
