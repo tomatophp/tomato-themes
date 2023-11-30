@@ -1,3 +1,22 @@
+@php
+    SEO::openGraphType('WebPage');
+    SEO::openGraphSiteName($page->title ?? setting('site_name'));
+    SEO::openGraphTitle($page->title ?? setting('site_name'));
+    SEO::openGraphUrl(url()->current());
+    SEO::openGraphImage($page->getMedia('cover')->first()?->getUrl() ?? setting('site_profile'));
+    SEO::metaByProperty('og:description', $page->short_description ?? setting('site_description'));
+
+    SEO::twitterCard('summary_large_image');
+    SEO::twitterTitle($page->title ?? setting('site_name'));
+    SEO::twitterDescription($page->short_description ?? setting('site_description'));
+    SEO::twitterImage($page->getMedia('cover')->first()?->getUrl() ?? setting('site_profile'));
+
+    SEO::canonical(url()->current());
+@endphp
+@seoTitle($page->title ?? setting('site_name'))
+@seoDescription($page->short_description ?? setting('site_description'))
+@seoKeywords($page->keywords ?? setting('site_keywords'))
+
 @if(auth('web')->user())
     @php
         $sections = \TomatoPHP\TomatoThemes\Facades\TomatoThemes::getSections();
