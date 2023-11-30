@@ -16,6 +16,8 @@ Route::middleware(['web', 'auth', 'splade', 'verified'])->name('admin.')->group(
 
 Route::middleware(['web','auth', 'splade', 'verified'])->prefix('themes')->name('admin.themes.')->group(static function (){
    Route::get('/', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'index'])->name('index');
+   Route::get('/page/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'edit'])->name('page.edit');
+   Route::post('/page/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'update'])->name('page.update');
    Route::post('/active', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'active'])->name('active');
    Route::get('/custom/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'custom'])->name('custom');
    Route::post('/custom/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'customSave'])->name('custom.save');

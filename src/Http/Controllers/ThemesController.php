@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use ProtoneMedia\Splade\Facades\Toast;
+use TomatoPHP\TomatoAdmin\Facade\Tomato;
 use TomatoPHP\TomatoSettings\Settings\ThemesSettings;
 use TomatoPHP\TomatoThemes\Generator\GenerateTheme;
 use ZipArchive;
@@ -282,5 +284,50 @@ class ThemesController extends Controller
 
         Toast::danger(__('Sorry Your Theme Not Found'))->autoDismiss(2);
         return back();
+    }
+
+    /**
+     * @param \TomatoPHP\TomatoCms\Models\Page $model
+     * @return \Illuminate\View\View
+     */
+    public function edit(\TomatoPHP\TomatoCms\Models\Page $model): View
+    {
+        return Tomato::get(
+            model: $model,
+            view: 'tomato-themes::themes.builder-page',
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param \TomatoPHP\TomatoCms\Models\Page $model
+     * @return RedirectResponse|JsonResponse
+     */
+    public function update(Request $request, \TomatoPHP\TomatoCms\Models\Page $model): RedirectResponse|JsonResponse
+    {
+        $response = Tomato::update(
+            request: $request,
+            model: $model,
+            validation: [
+                'color' => 'nullable|max:255',
+                'title' => 'sometimes|array',
+                'title*' => 'sometimes|string|max:255',
+                'short_description' => 'nullable|array',
+                'slug' => 'sometimes|max:255|string',
+                'body' => 'nullable|array',
+                'is_active' => 'nullable',
+                'has_view' => 'nullable',
+                'view' => 'nullable|max:255|string'
+            ],
+            message: __('Page updated successfully'),
+            redirect: 'admin.pages.index',
+            hasMedia: true,
+            collection: [
+                "cover" => false,
+                "gallery" => true,
+            ]
+        );
+
+        return redirect()->back();
     }
 }

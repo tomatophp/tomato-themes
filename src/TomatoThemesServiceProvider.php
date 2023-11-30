@@ -12,6 +12,8 @@ use TomatoPHP\TomatoThemes\Console\TomatoThemesGenerate;
 use TomatoPHP\TomatoThemes\Facades\TomatoThemes;
 use TomatoPHP\TomatoThemes\Menus\ThemesMenu;
 use TomatoPHP\TomatoThemes\Services\Theme;
+use TomatoPHP\TomatoThemes\Views\BuilderPage;
+use TomatoPHP\TomatoThemes\Views\BuilderToolbar;
 
 
 class TomatoThemesServiceProvider extends ServiceProvider
@@ -84,6 +86,10 @@ class TomatoThemesServiceProvider extends ServiceProvider
         app()->bind('tomato-themes', function(){
             return new Theme();
         });
+
+        $this->loadViewComponentsAs('tomato', [
+            BuilderToolbar::class
+        ]);
     }
 
     public function boot(): void
