@@ -4,6 +4,7 @@ namespace TomatoPHP\TomatoThemes\Facades;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
+use TomatoPHP\TomatoThemes\Services\Abstract\Section;
 
 /**
  * @method static registerSection(Section $section)
