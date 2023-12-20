@@ -31,17 +31,29 @@
                 @foreach(collect($model->meta('sections'))->sortBy('order')  ?? [] as $option)
                     <x-splade-data :default="['showOptions' => false]">
                         <div @mouseover="data.showOptions = true" @mouseleave="data.showOptions = false" class="relative">
-                            @include($option['section'], ['page' => $model, 'section' => $option])
-                            <div class="my-4 mx-4 absolute z-0 bottom-0 left-0" v-if="data.showOptions">
-                                @if($option['form'])
-                                    <x-tomato-admin-button  href="{{route('admin.pages.meta', $model->id) . '?section='. $option['uuid']}}" modal>
-                                        <i class="bx bx-edit"></i>
+                            @if(view()->exists($option['section']))
+                                @include($option['section'], ['page' => $model, 'section' => $option])
+                                <div class="my-4 mx-4 absolute z-0 bottom-0 left-0" v-if="data.showOptions">
+                                    @if($option['form'])
+                                        <x-tomato-admin-button  href="{{route('admin.pages.meta', $model->id) . '?section='. $option['uuid']}}" modal>
+                                            <i class="bx bx-edit"></i>
+                                        </x-tomato-admin-button>
+                                    @endif
+                                    <x-tomato-admin-button danger confirm method="DELETE" :data="['section' => $option['uuid']]" href="{{route('admin.pages.remove', $model->id)}}">
+                                        <i class="bx bx-trash"></i>
                                     </x-tomato-admin-button>
-                                @endif
-                                <x-tomato-admin-button danger confirm method="DELETE" :data="['section' => $option['uuid']]" href="{{route('admin.pages.remove', $model->id)}}">
-                                    <i class="bx bx-trash"></i>
-                                </x-tomato-admin-button>
-                            </div>
+                                </div>
+                            @else
+                                <div class="cursor-move flex flex-col gap-4 m-4 text-danger-500 items-center text-center justifiy-center w-full border rounded-lg p-4">
+                                    <x-heroicon-s-x-circle class="w-12 h-12" />
+                                    {{__('View Not Exists Please Delete IT!')}}
+                                </div>
+                                <div class="my-4 mx-4 absolute z-0 bottom-0 left-0" v-if="data.showOptions">
+                                    <x-tomato-admin-button danger confirm method="DELETE" :data="['section' => $option['uuid']]" href="{{route('admin.pages.remove', $model->id)}}">
+                                        <i class="bx bx-trash"></i>
+                                    </x-tomato-admin-button>
+                                </div>
+                            @endif
                         </div>
                     </x-splade-data>
                 @endforeach
