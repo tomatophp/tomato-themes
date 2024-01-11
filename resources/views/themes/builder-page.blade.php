@@ -5,11 +5,13 @@
 
     <x-splade-form class="flex flex-col space-y-4 overflow-scroll-x" action="{{route('admin.themes.page.update', $model->id)}}" method="post" :default="[
         'body' => [
-            app()->getLocale() => $model->body,
+            'ar' => $model->getTranslation('body', 'ar') ?? '',
+            'en' => $model->getTranslation('body', 'en') ?? '',
         ]
     ]">
-        <div>
-            <x-tomato-markdown-editor name="body.{{app()->getLocale()}}" :label="__('Body') . ' [' . str(app()->getLocale())->upper() . ']'"/>
+        <div class="flex flex-col gap-4">
+            <x-tomato-markdown-editor name="body[ar]" :label="__('Body [AR]')"/>
+            <x-tomato-markdown-editor name="body[en]" :label="__('Body [EN]')"/>
         </div>
         <div class="flex justify-start gap-2 pt-3">
             <x-tomato-admin-submit  label="{{__('Save')}}" :spinner="true" />
