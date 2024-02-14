@@ -19,13 +19,20 @@ Route::middleware(['web','auth', 'splade', 'verified'])->prefix('themes')->name(
    Route::get('/page/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'edit'])->name('page.edit');
    Route::post('/page/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'update'])->name('page.update');
    Route::post('/active', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'active'])->name('active');
-   Route::get('/custom/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'custom'])->name('custom');
-   Route::post('/custom/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'customSave'])->name('custom.save');
-   Route::get('/create', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'create'])->name('create');
-   Route::post('/', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'store'])->name('store');
-   Route::get('/upload', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'upload'])->name('upload');
-   Route::post('/upload', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'uploadNew'])->name('upload.new');
-   Route::delete('/destroy/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'destroy'])->name('destroy');
+   if(config('tomato-themes.allow_create')){
+       Route::get('/custom/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'custom'])->name('custom');
+       Route::post('/custom/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'customSave'])->name('custom.save');
+       Route::get('/create', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'create'])->name('create');
+       Route::post('/', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'store'])->name('store');
+   }
+   if(config('tomato-themes.allow_upload')){
+       Route::get('/upload', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'upload'])->name('upload');
+       Route::post('/upload', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'uploadNew'])->name('upload.new');
+   }
+
+   if(config('tomato-themes.allow_destroy')){
+       Route::delete('/destroy/{theme}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'destroy'])->name('destroy');
+   }
 });
 
 Route::middleware(['web','auth', 'splade', 'verified'])->name('admin.')->group(function () {
