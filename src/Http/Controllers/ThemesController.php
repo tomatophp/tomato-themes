@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Nwidart\Modules\Facades\Module;
 use ProtoneMedia\Splade\Facades\Toast;
 use TomatoPHP\TomatoAdmin\Facade\Tomato;
 use TomatoPHP\TomatoSettings\Settings\ThemesSettings;
@@ -42,12 +43,20 @@ class ThemesController extends Controller
     public function index(Request $request): Application|Factory|View
     {
         $getThemes = [];
-        if(File::exists(base_path('Themes'))){
-            $getThemes = collect(File::directories(base_path('Themes')));
-            $getThemes->transform(callback: static fn($item) => array(
-                "name" => Str::of($item)->remove(base_path('Themes').'/')->ucfirst()->title()->toString(),
+        if(File::exists(base_path('Modules'))){
+            $getThemes = collect(File::directories(base_path('Modules')));
+            $getThemes = $getThemes->filter(function ($item) {
+                $json = json_decode(File::get($item . "/module.json"));
+                if (isset($json->type) && $json->type === 'theme'){
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            })->transform(callback: static fn($item) => array(
+                "name" => Str::of($item)->remove(base_path('Modules').'/')->ucfirst()->title()->toString(),
                 "path" => $item,
-                "info" => json_decode(File::get($item . "/info.json"), false),
+                "info" => json_decode(File::get($item . "/module.json"), false),
             ));
 
             if($request->has('search') && !empty($request->get('search'))){
@@ -81,15 +90,7 @@ class ThemesController extends Controller
 
         if(File::exists(base_path('Themes'))) {
             $themes = File::directories(base_path('Themes'));
-            $exists = false;
-            foreach($themes as $theme){
-                $info = json_decode(File::get($theme . "/info.json"), false);
-                if($info->name == $request->get('name')){
-                    $exists = true;
-                    break;
-                }
-            }
-
+            $exists = Module::find($request->get('name'));
             if($exists){
                 Toast::danger(__('Sorry Your Theme Name Already Exists'))->autoDismiss(2);
                 return back();
@@ -112,11 +113,11 @@ class ThemesController extends Controller
      */
     public function custom(string $theme): Application|Factory|View|RedirectResponse
     {
-        if(File::exists(base_path('Themes') . "/" . $theme))
+        if(File::exists(base_path('Modules') . "/" . $theme))
         {
             $getTheme = [];
             $getTheme['name'] = $theme;
-            $getTheme['info'] = json_decode(File::get(base_path('Themes').'/'.$theme . "/info.json"), false);
+            $getTheme['info'] = json_decode(File::get(base_path('Modules').'/'.$theme . "/module.json"), false);
 
             $default = [];
             foreach ($getTheme['info']->settings as $key=>$setting) {
@@ -149,8 +150,8 @@ class ThemesController extends Controller
      */
     public function customSave(Request $request, string $theme): RedirectResponse
     {
-        if(File::exists(base_path('Themes') . "/" . $theme)) {
-            $filePath = base_path('Themes') . '/' . $theme . "/info.json";
+        if(File::exists(base_path('Modules') . "/" . $theme)) {
+            $filePath = base_path('Modules') . '/' . $theme . "/module.json";
             $info = json_decode(File::get($filePath, false));
 
             $rules = [];
@@ -197,14 +198,18 @@ class ThemesController extends Controller
         ]);
 
         $theme = $request->get("name");
-        if(File::exists(base_path('Themes') . '/' . $theme)){
-            $this->setting->theme_name = $request->get('theme');
-            $this->setting->theme_path = $request->get('name');
+
+
+        Module::find($this->setting->theme_name)->disable();
+
+        if(Module::find($theme)){
+            $this->setting->theme_name = $theme;
+            $this->setting->theme_path = $request->get('theme');
             $this->setting->save();
 
-            $themes = File::directories(base_path('Themes'));
+            $themes = File::directories(base_path('Modules'));
             foreach($themes as $item){
-                $filePath = $item . "/info.json";
+                $filePath = $item . "/module.json";
                 $info = json_decode(File::get($filePath));
 
                 if($info->name === $request->get('name')){
@@ -219,8 +224,10 @@ class ThemesController extends Controller
 
             $assetsFile = File::exists(public_path('themes') . $theme);
             if(!$assetsFile){
-                File::copyDirectory(base_path('Themes') . '/' . $theme . '/assets', storage_path('app/public/themes') . '/' . $theme);
+                File::copyDirectory(base_path('Modules') . '/' . $theme . '/resources/assets', storage_path('app/public/themes') . '/' . $theme);
             }
+
+            Module::find($theme)->enable();
 
             Toast::success(__('Your Theme Activated Success!'))->autoDismiss(2);
             return back();
@@ -252,9 +259,9 @@ class ThemesController extends Controller
         $res = $zip->open($request->file('theme'));
 
         if ($res === TRUE) {
-            $zip->extractTo(base_path('Themes'));
-            if(File::exists(base_path('Themes/__MACOSX'))){
-                File::deleteDirectory(base_path('Themes/__MACOSX'));
+            $zip->extractTo(base_path('Modules'));
+            if(File::exists(base_path('Modules/__MACOSX'))){
+                File::deleteDirectory(base_path('Modules/__MACOSX'));
             }
 
             $zip->close();
@@ -274,8 +281,8 @@ class ThemesController extends Controller
      */
     public function destroy(string $theme): RedirectResponse
     {
-        if(File::exists(base_path('Themes') .'/'. $theme)){
-            File::deleteDirectory(base_path('Themes') .'/'.  $theme);
+        if(File::exists(base_path('Modules') .'/'. $theme)){
+            File::deleteDirectory(base_path('Modules') .'/'.  $theme);
             File::deleteDirectory(storage_path('app/public/themes') .'/'.  $theme);
 
             Toast::success(__('Your Theme Has Been Deleted Success'));

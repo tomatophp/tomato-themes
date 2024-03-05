@@ -4,6 +4,7 @@ namespace TomatoPHP\TomatoThemes\Generator\Traits;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Nwidart\Modules\Facades\Module;
 
 trait GenerateInfo
 {
@@ -12,19 +13,23 @@ trait GenerateInfo
      */
     private function generateInfo(): void
     {
-        $this->generateStubs(
-            $this->stubPath . 'info.stub',
-            base_path('Themes') . '/' . $this->themeName . '/info.json',
-            [
-                "title" => $this->themeTitle,
-                "name" => $this->themeName,
-                "description" => $this->themeDescription,
-                "alias" => Str::of($this->themeName)->lower()->toString(),
-            ],
-            [
-                base_path("Themes"),
-                base_path("Themes") . "/". $this->themeName,
-            ]
-        );
+        if(Module::find($this->themeName)){
+            $modulePath = module_path($this->themeName) .'/module.json';
+            $module = json_decode(File::get($modulePath));
+            $module->title = [];
+            $module->title['ar'] = $this->themeTitle;
+            $module->title['en'] = $this->themeTitle;
+            $module->title['gr'] = $this->themeTitle;
+            $module->title['sp'] = $this->themeTitle;
+            $module->description = [];
+            $module->description['ar'] = $this->themeDescription;
+            $module->description['en'] = $this->themeDescription;
+            $module->description['gr'] = $this->themeDescription;
+            $module->description['sp'] = $this->themeDescription;
+            $module->placeholder = "placeholder.webp";
+            $module->type = "theme";
+
+            File::put($modulePath, json_encode($module, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE));
+        }
     }
 }
