@@ -14,14 +14,14 @@ trait GenerateReadMe
         //Generate Readme.md file
         $this->generateStubs(
             $this->stubPath . 'readme.stub',
-            base_path("Themes") . '/'. $this->themeName . '/README.md',
+            base_path("Modules") . '/'. $this->themeName . '/README.md',
             [
                 "name" => $this->themeName,
                 "description" => $this->themeDescription,
             ],
             [
-                base_path("Themes"),
-                base_path("Themes") . "/". $this->themeName,
+                base_path("Modules"),
+                base_path("Modules") . "/". $this->themeName,
             ]
         );
     }

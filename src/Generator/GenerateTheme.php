@@ -7,21 +7,17 @@ use Illuminate\Support\Str;
 use TomatoPHP\ConsoleHelpers\Traits\HandleFiles;
 use TomatoPHP\ConsoleHelpers\Traits\HandleStub;
 use TomatoPHP\TomatoSettings\Settings\ThemesSettings;
-use TomatoPHP\TomatoThemes\Generator\Traits\GenerateController;
-use TomatoPHP\TomatoThemes\Generator\Traits\GenerateFolders;
 use TomatoPHP\TomatoThemes\Generator\Traits\GenerateInfo;
+use TomatoPHP\TomatoThemes\Generator\Traits\GenerateModule;
 use TomatoPHP\TomatoThemes\Generator\Traits\GenerateReadMe;
-use TomatoPHP\TomatoThemes\Generator\Traits\GenerateRoutes;
 
 class GenerateTheme
 {
     use HandleStub;
     use HandleFiles;
-    use GenerateFolders;
-    use GenerateController;
     use GenerateInfo;
     use GenerateReadMe;
-    use GenerateRoutes;
+    use GenerateModule;
 
     public function __construct(
         private string $themeName,
@@ -41,10 +37,7 @@ class GenerateTheme
      */
     public function generate(): void
     {
-
-        $this->generateFolders();
-        $this->generateController();
-        $this->generateRoutes();
+        $this->generateModule();
         $this->generateReadMe();
         $this->generateInfo();
     }
