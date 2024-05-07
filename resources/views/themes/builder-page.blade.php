@@ -10,8 +10,7 @@
         ]
     ]">
         <div class="flex flex-col gap-4">
-            <x-tomato-markdown-editor name="body[ar]" :label="__('Body [AR]')"/>
-            <x-tomato-markdown-editor name="body[en]" :label="__('Body [EN]')"/>
+            <x-tomato-translation type="markdown" :label="__('Body')" name="body"/>
         </div>
         <div class="flex justify-start gap-2 pt-3">
             <x-tomato-admin-submit  label="{{__('Save')}}" :spinner="true" />

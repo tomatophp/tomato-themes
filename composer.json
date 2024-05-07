@@ -39,6 +39,7 @@
         "tomatophp/console-helpers": "^1.1",
         "tomatophp/tomato-admin": "^1.2",
         "tomatophp/tomato-sections": "^1.0",
+        "tomatophp/tomato-translations": "^1.2",
         "nwidart/laravel-modules": "^10.0"
     }
 }

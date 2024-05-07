@@ -15,7 +15,7 @@
     </x-slot:buttons>
     <x-splade-form method="POST" action="{{route('admin.forms.options', $model->id)}}">
         @foreach($sections as $key=>$section)
-            <h1 class="text-lg font-bold border-b border-gray-200 py-2 my-4">{{\Illuminate\Support\Str::of($key)->ucfirst()}}</h1>
+            <h1 class="text-lg font-bold border-b border-zinc-200 py-2 my-4">{{\Illuminate\Support\Str::of($key)->ucfirst()}}</h1>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 mb-4">
                 @foreach($section as $item)
                     <x-splade-link method="POST" href="{{route('admin.pages.sections', $model->id)}}" :data="['section' => $item['key']]" class="cursor-pointer flex flex-col jusitify-center items-center gap-2 w-full border rounded-lg p-4">

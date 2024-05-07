@@ -200,7 +200,7 @@ class ThemesController extends Controller
         $theme = $request->get("name");
 
 
-        Module::find($this->setting->theme_name)->disable();
+        Module::find($this->setting->theme_name)?->disable();
 
         if(Module::find($theme)){
             $this->setting->theme_name = $theme;

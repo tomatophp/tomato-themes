@@ -21,7 +21,7 @@
     @php
         $sections = \TomatoPHP\TomatoThemes\Facades\TomatoThemes::getSections();
     @endphp
-    <div class="border-b border-gray-700  bg-gray-800 p-4 w-full sticky top-0 z-10">
+    <div class="border-b border-zinc-700  bg-zinc-800 p-4 w-full sticky top-0 z-10">
         <div class="flex justify-between gap-4">
             <div>
                 <x-splade-form confirm method="POST" action="{{route('admin.pages.sections', $page->id)}}" :default="[
@@ -61,7 +61,7 @@
                         href="{{route('admin.themes.page.edit', $page->id)}}"
                         modal="{maxWidth: '7xl'}"
                         type="button"
-                        class="filament-icon-button flex items-center justify-center rounded-full relative hover:bg-gray-500/5 focus:outline-none text-danger-500 focus:bg-danger-500/10 dark:hover:bg-gray-300/5 w-10 h-10 ml-4 -mr-1">
+                        class="filament-icon-button flex items-center justify-center rounded-full relative hover:bg-zinc-500/5 focus:outline-none text-danger-500 focus:bg-danger-500/10 dark:hover:bg-zinc-300/5 w-10 h-10 ml-4 -mr-1">
                         <x-heroicon-s-pencil-square class="w-6 h-6" />
                     </x-splade-link>
                 </div>
@@ -78,7 +78,7 @@
                             <button
                                 title="filament::layout.database_notifications"
                                 type="button"
-                                class="filament-icon-button flex items-center justify-center rounded-full relative hover:bg-gray-500/5 focus:outline-none text-primary-500 focus:bg-primary-500/10 dark:hover:bg-gray-300/5 w-10 h-10 ml-4 -mr-1">
+                                class="filament-icon-button flex items-center justify-center rounded-full relative hover:bg-zinc-500/5 focus:outline-none text-primary-500 focus:bg-primary-500/10 dark:hover:bg-zinc-300/5 w-10 h-10 ml-4 -mr-1">
                             <span class="sr-only">
 
                             </span>
