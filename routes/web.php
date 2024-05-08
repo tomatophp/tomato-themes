@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::middleware(['web', 'auth', 'splade', 'verified'])->name('admin.')->group(function () {
+Route::middleware(array_merge(['splade', 'auth'], config('tomato-admin.route_middlewares')))->name('admin.')->group(function () {
     Route::get('admin/pages/{model}/builder', [\TomatoPHP\TomatoThemes\Http\Controllers\BuilderController::class, 'builder'])->name('pages.builder');
     Route::post('admin/pages/{model}/sections', [\TomatoPHP\TomatoThemes\Http\Controllers\BuilderController::class, 'sections'])->name('pages.sections');
     Route::delete('admin/pages/{model}/sections/remove', [\TomatoPHP\TomatoThemes\Http\Controllers\BuilderController::class, 'remove'])->name('pages.remove');
@@ -14,7 +14,7 @@ Route::middleware(['web', 'auth', 'splade', 'verified'])->name('admin.')->group(
     Route::post('admin/pages/{model}/clear', [\TomatoPHP\TomatoThemes\Http\Controllers\BuilderController::class, 'clear'])->name('pages.clear');
 });
 
-Route::middleware(['web','auth', 'splade', 'verified'])->prefix('themes')->name('admin.themes.')->group(static function (){
+Route::middleware(array_merge(['splade', 'auth'], config('tomato-admin.route_middlewares')))->prefix('themes')->name('admin.themes.')->group(static function (){
    Route::get('/', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'index'])->name('index');
    Route::get('/page/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'edit'])->name('page.edit');
    Route::post('/page/{model}', [\TomatoPHP\TomatoThemes\Http\Controllers\ThemesController::class,'update'])->name('page.update');
@@ -35,7 +35,7 @@ Route::middleware(['web','auth', 'splade', 'verified'])->prefix('themes')->name(
    }
 });
 
-Route::middleware(['web','auth', 'splade', 'verified'])->name('admin.')->group(function () {
+Route::middleware(array_merge(['splade', 'auth'], config('tomato-admin.route_middlewares')))->name('admin.')->group(function () {
     Route::get('admin/features', [TomatoPHP\TomatoThemes\Http\Controllers\FeatureController::class, 'index'])->name('features.index');
     Route::get('admin/features/api', [TomatoPHP\TomatoThemes\Http\Controllers\FeatureController::class, 'api'])->name('features.api');
     Route::get('admin/features/create', [TomatoPHP\TomatoThemes\Http\Controllers\FeatureController::class, 'create'])->name('features.create');
